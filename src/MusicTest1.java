@@ -23,6 +23,8 @@ public class MusicTest1 implements ControllerEventListener
 
             for (int i = 5; i < 61; i+= 4){
                 track.add(makeEvent(144,1,44,100,i));
+                //test event
+                track.add(makeEvent(176,1,127,100,i));
 
                 track.add(makeEvent(128, 1, 44, 100, i + 2));
 
@@ -56,7 +58,7 @@ public class MusicTest1 implements ControllerEventListener
     @Override
     public void controlChange(ShortMessage event) {
         //will register event occurence
-        System.out.println("la la la");
+        System.out.println("la");
 
     }
 }
