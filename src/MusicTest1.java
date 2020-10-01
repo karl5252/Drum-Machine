@@ -1,7 +1,13 @@
 import javax.sound.midi.*;
+import javax.swing.*;
+import java.awt.*;
 
 public class MusicTest1 implements ControllerEventListener
 {
+    static JFrame frame = new JFrame("Dancing rectumtangles");
+    static  MyDrawPanel my;
+
+
     public static void main(String[] args)
     {
         MusicTest1 test1 = new MusicTest1();
@@ -9,12 +15,11 @@ public class MusicTest1 implements ControllerEventListener
     }
     public void play()
     {
+        setupGui();
         try {
             Sequencer sequencer = MidiSystem.getSequencer();
             sequencer.open();
-
-            int[] eventsIWant = {127};
-            sequencer.addControllerEventListener(this, eventsIWant);
+            sequencer.addControllerEventListener(this, new int[] {127});
 
             Sequence seq = new Sequence(Sequence.PPQ,4);
 
@@ -39,6 +44,13 @@ public class MusicTest1 implements ControllerEventListener
             e.printStackTrace();
         }
     }
+    public void setupGui()
+    {
+        my = new MyDrawPanel();
+        frame.setContentPane(my);
+        frame.setBounds(30,30,300,300);
+        frame.setVisible(true);
+    }
 
     public static MidiEvent makeEvent (int comd, int chan, int one, int two, int tick)
     {
@@ -59,6 +71,42 @@ public class MusicTest1 implements ControllerEventListener
     public void controlChange(ShortMessage event) {
         //will register event occurence
         System.out.println("la");
+        my.controlChange(event);
 
     }
+
+    class MyDrawPanel extends JPanel implements ControllerEventListener {
+        boolean msgReceived = false;
+
+        @Override
+        public void controlChange(ShortMessage event) {
+            msgReceived = true;
+            repaint(); //refresh the rectumtangle
+
+        }
+        public void paintComponent(Graphics g)
+        {
+            if(msgReceived){
+                Graphics2D g2d = (Graphics2D) g; //cast
+
+                int red = (int) (Math.random() * 255 );
+                int green = (int) (Math.random() * 255 );
+                int blue = (int) (Math.random() * 255 );
+                g.setColor(new Color(red,green,blue));
+                //rectumtangle dim
+
+                int rectumHeight = (int) (Math.random() * 128 ) + 10;
+                int rectumWidth = (int) (Math.random() * 128 ) + 10;
+                int posX = (int) (Math.random() * 40 ) + 10;
+                int posY = (int) (Math.random() * 40 ) + 10;
+                g.fillRect(posX,posY,rectumWidth,rectumHeight);
+                msgReceived = false;
+
+
+
+            }
+        }
+    }
+
+
 }
